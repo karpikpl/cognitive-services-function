@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-
+ 
 public static async Task<HttpResponseMessage> Run(HttpRequestMessage request, TraceWriter log)
 {
     log.Info("DetermineLanguage function processed a request.");
