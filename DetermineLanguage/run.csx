@@ -22,7 +22,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage request, Tr
                     new
                     {
                         Id = Guid.NewGuid().ToString().ToLower(),
-                        Text = bodyData.Text
+                        Text = bodyData.text
                     }
                 }
             }
@@ -35,7 +35,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage request, Tr
             new 
             {
                 language = detectedLanguage,
-                text = bodyData.Text
+                text = bodyData.text
             }
         );
     }
