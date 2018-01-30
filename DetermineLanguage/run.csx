@@ -1,6 +1,7 @@
 #r "Newtonsoft.Json"
-using System.Net;
 using Newtonsoft.Json;
+using System.Configuration;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -8,7 +9,7 @@ using System.Text;
 public static async Task<HttpResponseMessage> Run(HttpRequestMessage request, TraceWriter log)
 {
     log.Info("DetermineLanguage function processed a request.");
-    dynamic bodyData = await request.Content.ReadAsObject<object>();
+    dynamic bodyData = await request.Content.ReadAsAsync<object>();
     using (HttpClient client = new HttpClient())
     {
         client.BaseAddress = new Uri(ConfigurationManager.AppSettings["EndpointUrl"] + "/", UriKind.Absolute);
