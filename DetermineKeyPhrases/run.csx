@@ -5,15 +5,17 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
 
-public static async Task<HttpResponseMessage> Run(HttpRequestMessage request, TraceWriter log)
+public static async Task<IActionResult> Run(HttpRequest request, ILogger log)
 {
-    log.Info("DetermineLanguage function processed a request.");
-    dynamic bodyData = await request.Content.ReadAsAsync<object>();
+    log.LogInformation("DetermineLanguage function processed a request.");    
+    string requestBody = await new StreamReader(request.Body).ReadToEndAsync();
+    dynamic bodyData = JsonConvert.DeserializeObject(requestBody);
     using (HttpClient client = new HttpClient())
     {
-        client.BaseAddress = new Uri(ConfigurationManager.AppSettings["EndpointUrl"] + "/", UriKind.Absolute);
-        client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", ConfigurationManager.AppSettings["EndpointKey"]);
+        client.BaseAddress = new Uri(System.Environment.GetEnvironmentVariable("EndpointUrl", EnvironmentVariableTarget.Process) + "/", UriKind.Absolute);
+        client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", System.Environment.GetEnvironmentVariable("EndpointKey", EnvironmentVariableTarget.Process));
         string postBody = JsonConvert.SerializeObject(
             new
             {
@@ -31,8 +33,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage request, Tr
         HttpResponseMessage response = await client.PostAsync($"keyPhrases", new StringContent(postBody, Encoding.UTF8, "application/json"));
         dynamic result = JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync());
         string[] keyPhrases = result.documents[0].keyPhrases.ToObject<string[]>();
-        return request.CreateResponse(
-            HttpStatusCode.OK, 
+        return new OkObjectResult(
             new 
             {
                 keyPhrases = keyPhrases,
