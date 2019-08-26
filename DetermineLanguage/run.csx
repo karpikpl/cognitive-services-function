@@ -44,10 +44,10 @@ public static async Task<IActionResult> Run(HttpRequest request, ILogger log)
                  text = bodyData.text
              }
          );
-      }
       catch(System.Exception ex)
       {
        log.LogError(ex);    
       }
+     }
     }
 }
