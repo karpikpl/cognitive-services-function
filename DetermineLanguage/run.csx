@@ -17,6 +17,7 @@ public static async Task<IActionResult> Run (HttpRequest request, ILogger log) {
             client.BaseAddress = new Uri (System.Environment.GetEnvironmentVariable ("EndpointUrl", EnvironmentVariableTarget.Process) + "/", UriKind.Absolute);
             client.DefaultRequestHeaders.Add ("Ocp-Apim-Subscription-Key", System.Environment.GetEnvironmentVariable ("EndpointKey", EnvironmentVariableTarget.Process));
             log.LogInformation ("Calling service at " + client.BaseAddress);
+            log.LogInformation ("Determining language for " + bodyData.text);
 
             string postBody = JsonConvert.SerializeObject (
                 new {
@@ -31,6 +32,8 @@ public static async Task<IActionResult> Run (HttpRequest request, ILogger log) {
             HttpResponseMessage response = await client.PostAsync ($"languages", new StringContent (postBody, Encoding.UTF8, "application/json"));
             dynamic result = JsonConvert.DeserializeObject (await response.Content.ReadAsStringAsync ());
             string detectedLanguage = result.documents[0].detectedLanguages[0].iso6391Name.ToObject<string> ();
+            log.LogInformation ("The result is " + detectedLanguage + " for " + bodyData.text);
+
             return new OkObjectResult (
                 new {
                     language = detectedLanguage,
