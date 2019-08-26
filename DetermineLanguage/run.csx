@@ -40,5 +40,6 @@ public static async Task<IActionResult> Run (HttpRequest request, ILogger log) {
         }
     } catch (System.Exception ex) {
         log.LogError ("ups", ex);
+        throw;
     }
 }
