@@ -24,7 +24,7 @@ public static async Task<IActionResult> Run (HttpRequest request, ILogger log) {
                     Documents = new [] {
                         new {
                             Id = Guid.NewGuid ().ToString ().ToLower (),
-                                Text = bodyData.text as string
+                            Text = (bodyData.text as string)
                         }
                     }
                 }
