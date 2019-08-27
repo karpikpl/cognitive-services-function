@@ -24,13 +24,17 @@ public static async Task<IActionResult> Run (HttpRequest request, ILogger log) {
                     Documents = new [] {
                         new {
                             Id = Guid.NewGuid ().ToString ().ToLower (),
-                            Text = bodyData.text as string
+                                Text = bodyData.text as string
                         }
                     }
                 }
             );
+            log.LogInformation ("Ready to send: " + postBody);
+
             HttpResponseMessage response = await client.PostAsync ($"languages", new StringContent (postBody, Encoding.UTF8, "application/json"));
-            dynamic result = JsonConvert.DeserializeObject (await response.Content.ReadAsStringAsync ());
+            var responseString = await response.Content.ReadAsStringAsync ();
+            log.LogInformation ("Ready to send: " + responseString);
+            dynamic result = JsonConvert.DeserializeObject (responseString);
             string detectedLanguage = result.documents[0].detectedLanguages[0].iso6391Name.ToObject<string> ();
             log.LogInformation ("The result is " + detectedLanguage + " for " + bodyData.text as string);
 
@@ -42,7 +46,7 @@ public static async Task<IActionResult> Run (HttpRequest request, ILogger log) {
             );
         }
     } catch (System.Exception ex) {
-        log.LogError ("ups", ex);
+        log.LogError (ex, "ups");
         throw;
     }
 }
