@@ -24,7 +24,7 @@ public static async Task<IActionResult> Run (HttpRequest request, ILogger log) {
                     Documents = new [] {
                         new {
                             Id = Guid.NewGuid ().ToString ().ToLower (),
-                            Text = bodyData.text
+                            Text =  bodyData.text
                         }
                     }
                 }
@@ -41,7 +41,7 @@ public static async Task<IActionResult> Run (HttpRequest request, ILogger log) {
             return new OkObjectResult (
                 new {
                     language = detectedLanguage,
-                        text = bodyData.text as string
+                        text = bodyData.text
                 }
             );
         }
