@@ -24,7 +24,7 @@ public static async Task<IActionResult> Run (HttpRequest request, ILogger log) {
                     Documents = new [] {
                         new {
                             Id = Guid.NewGuid ().ToString ().ToLower (),
-                            Text = (bodyData.text as string)
+                            Text = bodyData.text
                         }
                     }
                 }
@@ -33,7 +33,7 @@ public static async Task<IActionResult> Run (HttpRequest request, ILogger log) {
 
             HttpResponseMessage response = await client.PostAsync ($"languages", new StringContent (postBody, Encoding.UTF8, "application/json"));
             var responseString = await response.Content.ReadAsStringAsync ();
-            log.LogInformation ("Ready to send: " + responseString);
+            log.LogInformation ("Response from cognitive services: " + responseString);
             dynamic result = JsonConvert.DeserializeObject (responseString);
             string detectedLanguage = result.documents[0].detectedLanguages[0].iso6391Name.ToObject<string> ();
             log.LogInformation ("The result is " + detectedLanguage + " for " + bodyData.text as string);
